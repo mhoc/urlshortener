@@ -1,6 +1,9 @@
 package store
 
-import "testing"
+import (
+	"testing"
+	"time"
+)
 
 func TestInMemoryStore_CreateAndGetBasic(t *testing.T) {
 	ims := NewInMemoryStore()
@@ -76,5 +79,56 @@ func TestInMemoryStore_Remove_Nonexisting(t *testing.T) {
 	}
 	if removed {
 		t.Errorf("expected negative removal of key nonexistent in in-memory store, but store reports key did exist")
+	}
+}
+
+func TestInMemoryStore_CreateMulti_WithExpiration(t *testing.T) {
+	ims := NewInMemoryStore()
+	_, err := ims.Create("https://example.com/1", 60*time.Second)
+	if err != nil {
+		t.Error(err)
+	}
+	_, err = ims.Create("https://example.com/2", 60*time.Second)
+	if err != nil {
+		t.Error(err)
+	}
+	_, err = ims.Create("https://example.com/3", 120*time.Second)
+	if err != nil {
+		t.Error(err)
+	}
+	_, err = ims.Create("https://example.com/4", 140*time.Second)
+	if err != nil {
+		t.Error(err)
+	}
+	_, err = ims.Create("https://example.com/5", 2*time.Second)
+	if err != nil {
+		t.Error(err)
+	}
+}
+
+func TestInMemoryStore_Expiration(t *testing.T) {
+	ims := NewInMemoryStore()
+	idShouldBeDeleted, err := ims.Create("https://example.com/1", 1*time.Second)
+	if err != nil {
+		t.Error(err)
+	}
+	idShouldRemain, err := ims.Create("https://example.com/2", 60*time.Second)
+	if err != nil {
+		t.Error(err)
+	}
+	time.Sleep(3 * time.Second)
+	redirectToUrl, err := ims.Get(idShouldBeDeleted)
+	if err != nil {
+		t.Error(err)
+	}
+	if redirectToUrl != "" {
+		t.Error("expected the provided key to be expired, but it wasn't")
+	}
+	redirectToUrl, err = ims.Get(idShouldRemain)
+	if err != nil {
+		t.Error(err)
+	}
+	if redirectToUrl == "" {
+		t.Error("expected the provided key to not be expired, but it wasn't")
 	}
 }
