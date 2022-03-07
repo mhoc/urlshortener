@@ -1,6 +1,9 @@
 package handler
 
-import "net/http"
+import (
+	"log"
+	"net/http"
+)
 
 type ShortlinkRedirect struct{}
 
@@ -9,5 +12,5 @@ func NewShortlinkRedirect() ShortlinkRedirect {
 }
 
 func (h ShortlinkRedirect) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-
+	log.Printf("ShortlinkRedirect")
 }

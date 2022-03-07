@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+option go_package = "pkg/proto";
+
+service URLShortenerV1 {
+    rpc HealthCheck(HealthChecpReq) returns (HealthCheckResp);
+}
+
+message HealthChecpReq {}
+
+message HealthCheckResp {
+    bool ok = 1;
+}
