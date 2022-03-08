@@ -5,7 +5,7 @@ import (
 	"sync"
 	"time"
 
-	"gitlab.com/mhoc/urlshortener/pkg/util"
+	"github.com/mhoc/urlshortener/pkg/util"
 )
 
 // InMemoryStore stores url redirects in-memory, expectedly losing them upon service restart.

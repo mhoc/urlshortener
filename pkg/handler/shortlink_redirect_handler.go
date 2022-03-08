@@ -3,8 +3,8 @@ package handler
 import (
 	"net/http"
 
-	"gitlab.com/mhoc/urlshortener/pkg/store"
-	"gitlab.com/mhoc/urlshortener/pkg/util"
+	"github.com/mhoc/urlshortener/pkg/store"
+	"github.com/mhoc/urlshortener/pkg/util"
 )
 
 type ShortlinkRedirect struct {

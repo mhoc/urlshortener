@@ -4,12 +4,12 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/mhoc/urlshortener/pkg/config"
+	"github.com/mhoc/urlshortener/pkg/handler"
+	"github.com/mhoc/urlshortener/pkg/middleware"
+	"github.com/mhoc/urlshortener/pkg/proto"
+	"github.com/mhoc/urlshortener/pkg/store"
 	"github.com/twitchtv/twirp"
-	"gitlab.com/mhoc/urlshortener/pkg/config"
-	"gitlab.com/mhoc/urlshortener/pkg/handler"
-	"gitlab.com/mhoc/urlshortener/pkg/middleware"
-	"gitlab.com/mhoc/urlshortener/pkg/proto"
-	"gitlab.com/mhoc/urlshortener/pkg/store"
 )
 
 func main() {

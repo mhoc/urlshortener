@@ -5,9 +5,9 @@ import (
 	fmt "fmt"
 	"time"
 
-	"gitlab.com/mhoc/urlshortener/pkg/config"
-	"gitlab.com/mhoc/urlshortener/pkg/store"
-	"gitlab.com/mhoc/urlshortener/pkg/util"
+	"github.com/mhoc/urlshortener/pkg/config"
+	"github.com/mhoc/urlshortener/pkg/store"
+	"github.com/mhoc/urlshortener/pkg/util"
 )
 
 type Server struct {

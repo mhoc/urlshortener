@@ -26,7 +26,7 @@ Your solution must support:
 
 Project Requirements:
 
-- This project should be able to be runnable locally with  some simple instructions
+- This project should be able to be runnable locally with some simple instructions
 - This project's documentation should include build and deploy instruction
 - Tests should be provided and able to be executed locally or within a test environment.
 
