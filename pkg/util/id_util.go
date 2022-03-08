@@ -1,9 +1,9 @@
 package util
 
 import (
+	"fmt"
 	"math/rand"
 	"net/url"
-	"path"
 
 	"time"
 )
@@ -27,6 +27,18 @@ func NewID() string {
 	return string(b)
 }
 
-func IDToURL(rootUrl *url.URL, id string) string {
-	return path.Join(rootUrl.String(), id)
+// IDToShortlink converts an ID, and the root url of the server, into a shortlink viable to returned
+// to the client for url shortening fun.
+func IDToShortlink(rootUrl *url.URL, id string) string {
+	return rootUrl.String() + "/" + id
+}
+
+// ShortlinkToID takes a shortlink and retrieves the ID from the path
+func ShortlinkToID(shortlink string) (string, error) {
+	u, err := url.Parse(shortlink)
+	if err != nil {
+		return "", fmt.Errorf("unable to parse url shortlink: %v", err.Error())
+	}
+	// u.Path includes the leading slash
+	return u.Path[1:], nil
 }

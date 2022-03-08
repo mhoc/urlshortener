@@ -36,6 +36,8 @@ type URLShortenerV1 interface {
 	CreateShortlink(context.Context, *CreateShortlinkReq) (*CreateShortlinkResp, error)
 
 	HealthCheck(context.Context, *HealthChecpReq) (*HealthCheckResp, error)
+
+	RemoveShortlink(context.Context, *RemoveShortlinkReq) (*RemoveShortlinkResp, error)
 }
 
 // ==============================
@@ -44,7 +46,7 @@ type URLShortenerV1 interface {
 
 type uRLShortenerV1ProtobufClient struct {
 	client      HTTPClient
-	urls        [2]string
+	urls        [3]string
 	interceptor twirp.Interceptor
 	opts        twirp.ClientOptions
 }
@@ -72,9 +74,10 @@ func NewURLShortenerV1ProtobufClient(baseURL string, client HTTPClient, opts ...
 	// Build method URLs: <baseURL>[<prefix>]/<package>.<Service>/<Method>
 	serviceURL := sanitizeBaseURL(baseURL)
 	serviceURL += baseServicePath(pathPrefix, "", "URLShortenerV1")
-	urls := [2]string{
+	urls := [3]string{
 		serviceURL + "CreateShortlink",
 		serviceURL + "HealthCheck",
+		serviceURL + "RemoveShortlink",
 	}
 
 	return &uRLShortenerV1ProtobufClient{
@@ -177,13 +180,59 @@ func (c *uRLShortenerV1ProtobufClient) callHealthCheck(ctx context.Context, in *
 	return out, nil
 }
 
+func (c *uRLShortenerV1ProtobufClient) RemoveShortlink(ctx context.Context, in *RemoveShortlinkReq) (*RemoveShortlinkResp, error) {
+	ctx = ctxsetters.WithPackageName(ctx, "")
+	ctx = ctxsetters.WithServiceName(ctx, "URLShortenerV1")
+	ctx = ctxsetters.WithMethodName(ctx, "RemoveShortlink")
+	caller := c.callRemoveShortlink
+	if c.interceptor != nil {
+		caller = func(ctx context.Context, req *RemoveShortlinkReq) (*RemoveShortlinkResp, error) {
+			resp, err := c.interceptor(
+				func(ctx context.Context, req interface{}) (interface{}, error) {
+					typedReq, ok := req.(*RemoveShortlinkReq)
+					if !ok {
+						return nil, twirp.InternalError("failed type assertion req.(*RemoveShortlinkReq) when calling interceptor")
+					}
+					return c.callRemoveShortlink(ctx, typedReq)
+				},
+			)(ctx, req)
+			if resp != nil {
+				typedResp, ok := resp.(*RemoveShortlinkResp)
+				if !ok {
+					return nil, twirp.InternalError("failed type assertion resp.(*RemoveShortlinkResp) when calling interceptor")
+				}
+				return typedResp, err
+			}
+			return nil, err
+		}
+	}
+	return caller(ctx, in)
+}
+
+func (c *uRLShortenerV1ProtobufClient) callRemoveShortlink(ctx context.Context, in *RemoveShortlinkReq) (*RemoveShortlinkResp, error) {
+	out := new(RemoveShortlinkResp)
+	ctx, err := doProtobufRequest(ctx, c.client, c.opts.Hooks, c.urls[2], in, out)
+	if err != nil {
+		twerr, ok := err.(twirp.Error)
+		if !ok {
+			twerr = twirp.InternalErrorWith(err)
+		}
+		callClientError(ctx, c.opts.Hooks, twerr)
+		return nil, err
+	}
+
+	callClientResponseReceived(ctx, c.opts.Hooks)
+
+	return out, nil
+}
+
 // ==========================
 // URLShortenerV1 JSON Client
 // ==========================
 
 type uRLShortenerV1JSONClient struct {
 	client      HTTPClient
-	urls        [2]string
+	urls        [3]string
 	interceptor twirp.Interceptor
 	opts        twirp.ClientOptions
 }
@@ -211,9 +260,10 @@ func NewURLShortenerV1JSONClient(baseURL string, client HTTPClient, opts ...twir
 	// Build method URLs: <baseURL>[<prefix>]/<package>.<Service>/<Method>
 	serviceURL := sanitizeBaseURL(baseURL)
 	serviceURL += baseServicePath(pathPrefix, "", "URLShortenerV1")
-	urls := [2]string{
+	urls := [3]string{
 		serviceURL + "CreateShortlink",
 		serviceURL + "HealthCheck",
+		serviceURL + "RemoveShortlink",
 	}
 
 	return &uRLShortenerV1JSONClient{
@@ -302,6 +352,52 @@ func (c *uRLShortenerV1JSONClient) HealthCheck(ctx context.Context, in *HealthCh
 func (c *uRLShortenerV1JSONClient) callHealthCheck(ctx context.Context, in *HealthChecpReq) (*HealthCheckResp, error) {
 	out := new(HealthCheckResp)
 	ctx, err := doJSONRequest(ctx, c.client, c.opts.Hooks, c.urls[1], in, out)
+	if err != nil {
+		twerr, ok := err.(twirp.Error)
+		if !ok {
+			twerr = twirp.InternalErrorWith(err)
+		}
+		callClientError(ctx, c.opts.Hooks, twerr)
+		return nil, err
+	}
+
+	callClientResponseReceived(ctx, c.opts.Hooks)
+
+	return out, nil
+}
+
+func (c *uRLShortenerV1JSONClient) RemoveShortlink(ctx context.Context, in *RemoveShortlinkReq) (*RemoveShortlinkResp, error) {
+	ctx = ctxsetters.WithPackageName(ctx, "")
+	ctx = ctxsetters.WithServiceName(ctx, "URLShortenerV1")
+	ctx = ctxsetters.WithMethodName(ctx, "RemoveShortlink")
+	caller := c.callRemoveShortlink
+	if c.interceptor != nil {
+		caller = func(ctx context.Context, req *RemoveShortlinkReq) (*RemoveShortlinkResp, error) {
+			resp, err := c.interceptor(
+				func(ctx context.Context, req interface{}) (interface{}, error) {
+					typedReq, ok := req.(*RemoveShortlinkReq)
+					if !ok {
+						return nil, twirp.InternalError("failed type assertion req.(*RemoveShortlinkReq) when calling interceptor")
+					}
+					return c.callRemoveShortlink(ctx, typedReq)
+				},
+			)(ctx, req)
+			if resp != nil {
+				typedResp, ok := resp.(*RemoveShortlinkResp)
+				if !ok {
+					return nil, twirp.InternalError("failed type assertion resp.(*RemoveShortlinkResp) when calling interceptor")
+				}
+				return typedResp, err
+			}
+			return nil, err
+		}
+	}
+	return caller(ctx, in)
+}
+
+func (c *uRLShortenerV1JSONClient) callRemoveShortlink(ctx context.Context, in *RemoveShortlinkReq) (*RemoveShortlinkResp, error) {
+	out := new(RemoveShortlinkResp)
+	ctx, err := doJSONRequest(ctx, c.client, c.opts.Hooks, c.urls[2], in, out)
 	if err != nil {
 		twerr, ok := err.(twirp.Error)
 		if !ok {
@@ -418,6 +514,9 @@ func (s *uRLShortenerV1Server) ServeHTTP(resp http.ResponseWriter, req *http.Req
 		return
 	case "HealthCheck":
 		s.serveHealthCheck(ctx, resp, req)
+		return
+	case "RemoveShortlink":
+		s.serveRemoveShortlink(ctx, resp, req)
 		return
 	default:
 		msg := fmt.Sprintf("no handler for path %q", req.URL.Path)
@@ -763,6 +862,186 @@ func (s *uRLShortenerV1Server) serveHealthCheckProtobuf(ctx context.Context, res
 	}
 	if respContent == nil {
 		s.writeError(ctx, resp, twirp.InternalError("received a nil *HealthCheckResp and nil error while calling HealthCheck. nil responses are not supported"))
+		return
+	}
+
+	ctx = callResponsePrepared(ctx, s.hooks)
+
+	respBytes, err := proto.Marshal(respContent)
+	if err != nil {
+		s.writeError(ctx, resp, wrapInternal(err, "failed to marshal proto response"))
+		return
+	}
+
+	ctx = ctxsetters.WithStatusCode(ctx, http.StatusOK)
+	resp.Header().Set("Content-Type", "application/protobuf")
+	resp.Header().Set("Content-Length", strconv.Itoa(len(respBytes)))
+	resp.WriteHeader(http.StatusOK)
+	if n, err := resp.Write(respBytes); err != nil {
+		msg := fmt.Sprintf("failed to write response, %d of %d bytes written: %s", n, len(respBytes), err.Error())
+		twerr := twirp.NewError(twirp.Unknown, msg)
+		ctx = callError(ctx, s.hooks, twerr)
+	}
+	callResponseSent(ctx, s.hooks)
+}
+
+func (s *uRLShortenerV1Server) serveRemoveShortlink(ctx context.Context, resp http.ResponseWriter, req *http.Request) {
+	header := req.Header.Get("Content-Type")
+	i := strings.Index(header, ";")
+	if i == -1 {
+		i = len(header)
+	}
+	switch strings.TrimSpace(strings.ToLower(header[:i])) {
+	case "application/json":
+		s.serveRemoveShortlinkJSON(ctx, resp, req)
+	case "application/protobuf":
+		s.serveRemoveShortlinkProtobuf(ctx, resp, req)
+	default:
+		msg := fmt.Sprintf("unexpected Content-Type: %q", req.Header.Get("Content-Type"))
+		twerr := badRouteError(msg, req.Method, req.URL.Path)
+		s.writeError(ctx, resp, twerr)
+	}
+}
+
+func (s *uRLShortenerV1Server) serveRemoveShortlinkJSON(ctx context.Context, resp http.ResponseWriter, req *http.Request) {
+	var err error
+	ctx = ctxsetters.WithMethodName(ctx, "RemoveShortlink")
+	ctx, err = callRequestRouted(ctx, s.hooks)
+	if err != nil {
+		s.writeError(ctx, resp, err)
+		return
+	}
+
+	d := json.NewDecoder(req.Body)
+	rawReqBody := json.RawMessage{}
+	if err := d.Decode(&rawReqBody); err != nil {
+		s.handleRequestBodyError(ctx, resp, "the json request could not be decoded", err)
+		return
+	}
+	reqContent := new(RemoveShortlinkReq)
+	unmarshaler := protojson.UnmarshalOptions{DiscardUnknown: true}
+	if err = unmarshaler.Unmarshal(rawReqBody, reqContent); err != nil {
+		s.handleRequestBodyError(ctx, resp, "the json request could not be decoded", err)
+		return
+	}
+
+	handler := s.URLShortenerV1.RemoveShortlink
+	if s.interceptor != nil {
+		handler = func(ctx context.Context, req *RemoveShortlinkReq) (*RemoveShortlinkResp, error) {
+			resp, err := s.interceptor(
+				func(ctx context.Context, req interface{}) (interface{}, error) {
+					typedReq, ok := req.(*RemoveShortlinkReq)
+					if !ok {
+						return nil, twirp.InternalError("failed type assertion req.(*RemoveShortlinkReq) when calling interceptor")
+					}
+					return s.URLShortenerV1.RemoveShortlink(ctx, typedReq)
+				},
+			)(ctx, req)
+			if resp != nil {
+				typedResp, ok := resp.(*RemoveShortlinkResp)
+				if !ok {
+					return nil, twirp.InternalError("failed type assertion resp.(*RemoveShortlinkResp) when calling interceptor")
+				}
+				return typedResp, err
+			}
+			return nil, err
+		}
+	}
+
+	// Call service method
+	var respContent *RemoveShortlinkResp
+	func() {
+		defer ensurePanicResponses(ctx, resp, s.hooks)
+		respContent, err = handler(ctx, reqContent)
+	}()
+
+	if err != nil {
+		s.writeError(ctx, resp, err)
+		return
+	}
+	if respContent == nil {
+		s.writeError(ctx, resp, twirp.InternalError("received a nil *RemoveShortlinkResp and nil error while calling RemoveShortlink. nil responses are not supported"))
+		return
+	}
+
+	ctx = callResponsePrepared(ctx, s.hooks)
+
+	marshaler := &protojson.MarshalOptions{UseProtoNames: !s.jsonCamelCase, EmitUnpopulated: !s.jsonSkipDefaults}
+	respBytes, err := marshaler.Marshal(respContent)
+	if err != nil {
+		s.writeError(ctx, resp, wrapInternal(err, "failed to marshal json response"))
+		return
+	}
+
+	ctx = ctxsetters.WithStatusCode(ctx, http.StatusOK)
+	resp.Header().Set("Content-Type", "application/json")
+	resp.Header().Set("Content-Length", strconv.Itoa(len(respBytes)))
+	resp.WriteHeader(http.StatusOK)
+
+	if n, err := resp.Write(respBytes); err != nil {
+		msg := fmt.Sprintf("failed to write response, %d of %d bytes written: %s", n, len(respBytes), err.Error())
+		twerr := twirp.NewError(twirp.Unknown, msg)
+		ctx = callError(ctx, s.hooks, twerr)
+	}
+	callResponseSent(ctx, s.hooks)
+}
+
+func (s *uRLShortenerV1Server) serveRemoveShortlinkProtobuf(ctx context.Context, resp http.ResponseWriter, req *http.Request) {
+	var err error
+	ctx = ctxsetters.WithMethodName(ctx, "RemoveShortlink")
+	ctx, err = callRequestRouted(ctx, s.hooks)
+	if err != nil {
+		s.writeError(ctx, resp, err)
+		return
+	}
+
+	buf, err := ioutil.ReadAll(req.Body)
+	if err != nil {
+		s.handleRequestBodyError(ctx, resp, "failed to read request body", err)
+		return
+	}
+	reqContent := new(RemoveShortlinkReq)
+	if err = proto.Unmarshal(buf, reqContent); err != nil {
+		s.writeError(ctx, resp, malformedRequestError("the protobuf request could not be decoded"))
+		return
+	}
+
+	handler := s.URLShortenerV1.RemoveShortlink
+	if s.interceptor != nil {
+		handler = func(ctx context.Context, req *RemoveShortlinkReq) (*RemoveShortlinkResp, error) {
+			resp, err := s.interceptor(
+				func(ctx context.Context, req interface{}) (interface{}, error) {
+					typedReq, ok := req.(*RemoveShortlinkReq)
+					if !ok {
+						return nil, twirp.InternalError("failed type assertion req.(*RemoveShortlinkReq) when calling interceptor")
+					}
+					return s.URLShortenerV1.RemoveShortlink(ctx, typedReq)
+				},
+			)(ctx, req)
+			if resp != nil {
+				typedResp, ok := resp.(*RemoveShortlinkResp)
+				if !ok {
+					return nil, twirp.InternalError("failed type assertion resp.(*RemoveShortlinkResp) when calling interceptor")
+				}
+				return typedResp, err
+			}
+			return nil, err
+		}
+	}
+
+	// Call service method
+	var respContent *RemoveShortlinkResp
+	func() {
+		defer ensurePanicResponses(ctx, resp, s.hooks)
+		respContent, err = handler(ctx, reqContent)
+	}()
+
+	if err != nil {
+		s.writeError(ctx, resp, err)
+		return
+	}
+	if respContent == nil {
+		s.writeError(ctx, resp, twirp.InternalError("received a nil *RemoveShortlinkResp and nil error while calling RemoveShortlink. nil responses are not supported"))
 		return
 	}
 
@@ -1364,21 +1643,24 @@ func callClientError(ctx context.Context, h *twirp.ClientHooks, err twirp.Error)
 }
 
 var twirpFileDescriptor0 = []byte{
-	// 250 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x92, 0x2a, 0x28, 0xca, 0x2f,
-	0xc9, 0xd7, 0x0f, 0x0d, 0xf2, 0x09, 0xce, 0xc8, 0x2f, 0x2a, 0x49, 0xcd, 0x4b, 0x2d, 0x0a, 0x33,
-	0xd4, 0x03, 0x0b, 0x2a, 0x15, 0x70, 0x09, 0x39, 0x17, 0xa5, 0x26, 0x96, 0xa4, 0x82, 0xa5, 0x72,
-	0x32, 0xf3, 0xb2, 0x83, 0x52, 0x0b, 0x85, 0x04, 0xb8, 0x98, 0x4b, 0x8b, 0x72, 0x24, 0x18, 0x15,
-	0x18, 0x35, 0x38, 0x83, 0x40, 0x4c, 0x21, 0x43, 0x2e, 0xa1, 0xd4, 0x8a, 0x82, 0xcc, 0xa2, 0xd4,
-	0xe2, 0xf8, 0xcc, 0xbc, 0xf8, 0xe2, 0xd4, 0xe4, 0xfc, 0xbc, 0x94, 0x62, 0x09, 0x26, 0x05, 0x46,
-	0x0d, 0x56, 0x0f, 0x86, 0x20, 0x01, 0xa8, 0x9c, 0x67, 0x5e, 0x30, 0x44, 0xa6, 0x83, 0x91, 0xd1,
-	0x49, 0x94, 0x4b, 0x38, 0x1e, 0x53, 0x8f, 0x92, 0x11, 0x97, 0x30, 0x86, 0x8d, 0xc5, 0x05, 0x42,
-	0xd2, 0x5c, 0x9c, 0xc5, 0x20, 0x81, 0x78, 0x84, 0xc5, 0x1c, 0x60, 0x81, 0xd0, 0xa2, 0x1c, 0x25,
-	0x01, 0x2e, 0x3e, 0x8f, 0xd4, 0xc4, 0x9c, 0x92, 0x0c, 0xe7, 0x8c, 0xd4, 0xe4, 0x82, 0xa0, 0xd4,
-	0x42, 0x25, 0x45, 0x2e, 0x7e, 0x84, 0x08, 0xc4, 0x04, 0x3e, 0x2e, 0xa6, 0xfc, 0x6c, 0xb0, 0x56,
-	0x8e, 0x20, 0xa6, 0xfc, 0x6c, 0xa3, 0x06, 0x46, 0x2e, 0x3e, 0x54, 0x3f, 0x0b, 0xd9, 0x70, 0xf1,
-	0xa3, 0xd9, 0x2d, 0x24, 0xac, 0x87, 0xe9, 0x7f, 0x29, 0x11, 0x3d, 0x6c, 0x4e, 0x34, 0xe0, 0xe2,
-	0x46, 0xb2, 0x53, 0x88, 0x5f, 0x0f, 0xd5, 0x4d, 0x52, 0x02, 0x7a, 0x68, 0x4e, 0x72, 0xe2, 0x8e,
-	0xe2, 0x2c, 0xc8, 0x4e, 0xd7, 0x07, 0x07, 0x75, 0x12, 0x1b, 0x98, 0x32, 0x06, 0x04, 0x00, 0x00,
-	0xff, 0xff, 0x0c, 0x7b, 0xba, 0x6b, 0x8f, 0x01, 0x00, 0x00,
+	// 293 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x7c, 0x92, 0xc1, 0x4f, 0x83, 0x30,
+	0x14, 0xc6, 0x2d, 0x46, 0x1d, 0x6f, 0x09, 0x90, 0x32, 0x13, 0x82, 0x97, 0xc9, 0x69, 0xa7, 0x22,
+	0xf3, 0xba, 0xd3, 0x76, 0x99, 0x89, 0xa7, 0x2e, 0xf3, 0xe0, 0x85, 0xcc, 0xed, 0x45, 0x08, 0x48,
+	0xbb, 0x16, 0x8d, 0x7f, 0x82, 0x7f, 0x95, 0x7f, 0x9b, 0x59, 0x37, 0x33, 0x81, 0xc5, 0x13, 0xf4,
+	0x7b, 0xf9, 0xde, 0xd7, 0xdf, 0x97, 0x42, 0x28, 0x95, 0xa8, 0x45, 0xbc, 0xe4, 0x8f, 0x8b, 0x4c,
+	0xa8, 0x1a, 0x2b, 0x54, 0x4f, 0x09, 0x33, 0x62, 0x24, 0x81, 0xce, 0x14, 0xae, 0x6a, 0x34, 0xa3,
+	0x32, 0xaf, 0x0a, 0x8e, 0x5b, 0xea, 0xc1, 0xf9, 0xbb, 0x2a, 0x03, 0x32, 0x24, 0x23, 0x9b, 0xef,
+	0x7e, 0x69, 0x02, 0x14, 0x3f, 0x65, 0xae, 0x50, 0xa7, 0x79, 0x95, 0x6a, 0x5c, 0x8b, 0x6a, 0xa3,
+	0x03, 0x6b, 0x48, 0x46, 0x17, 0xf3, 0x33, 0xee, 0x1d, 0x66, 0x0f, 0xd5, 0x62, 0x3f, 0xf9, 0x22,
+	0x64, 0x7a, 0x0d, 0x7e, 0xda, 0xf5, 0x44, 0x63, 0xf0, 0x3b, 0x89, 0x5a, 0xd2, 0x1b, 0xb0, 0xf5,
+	0x4e, 0x48, 0x8f, 0xc1, 0x3d, 0x23, 0x2c, 0x55, 0x19, 0x79, 0xe0, 0xcc, 0x71, 0x55, 0xd6, 0xd9,
+	0x2c, 0xc3, 0xb5, 0xe4, 0xb8, 0x8d, 0x6e, 0xc1, 0x3d, 0x2a, 0xfb, 0x0d, 0x0e, 0x58, 0xa2, 0x30,
+	0xd6, 0x1e, 0xb7, 0x44, 0x11, 0x25, 0x40, 0x39, 0xbe, 0x89, 0x8f, 0x26, 0xda, 0xbf, 0x39, 0x31,
+	0xf8, 0x1d, 0x8b, 0x96, 0x34, 0x80, 0x2b, 0x65, 0xe4, 0xcd, 0x61, 0xfd, 0xef, 0x71, 0xfc, 0x4d,
+	0xc0, 0x69, 0xf6, 0x4a, 0x27, 0xe0, 0xb6, 0xf8, 0xa8, 0xcf, 0xba, 0x1d, 0x87, 0x03, 0x76, 0xaa,
+	0x86, 0x3b, 0xe8, 0xff, 0xe1, 0xa2, 0x2e, 0x6b, 0x72, 0x87, 0x1e, 0x6b, 0x63, 0x4f, 0xc0, 0x6d,
+	0xdd, 0x99, 0xfa, 0xac, 0x0b, 0x1e, 0x0e, 0xd8, 0x09, 0xb4, 0x69, 0xff, 0xd9, 0x96, 0xc5, 0x6b,
+	0x6c, 0x1e, 0xc3, 0xcb, 0xa5, 0xf9, 0xdc, 0xff, 0x04, 0x00, 0x00, 0xff, 0xff, 0xaf, 0x0f, 0x57,
+	0xc7, 0x31, 0x02, 0x00, 0x00,
 }

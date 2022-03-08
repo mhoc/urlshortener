@@ -1,10 +1,10 @@
 syntax = "proto3";
-
 option go_package = "pkg/proto";
 
 service URLShortenerV1 {
     rpc CreateShortlink(CreateShortlinkReq) returns (CreateShortlinkResp);
     rpc HealthCheck(HealthChecpReq) returns (HealthCheckResp);
+    rpc RemoveShortlink(RemoveShortlinkReq) returns (RemoveShortlinkResp);
 }
 
 message CreateShortlinkReq {
@@ -20,4 +20,12 @@ message HealthChecpReq {}
 
 message HealthCheckResp {
     bool ok = 1;
+}
+
+message RemoveShortlinkReq {
+    string short_url = 1;
+}
+
+message RemoveShortlinkResp {
+    bool removed = 1;
 }

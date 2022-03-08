@@ -32,12 +32,26 @@ func (s Server) CreateShortlink(ctx context.Context, req *CreateShortlinkReq) (*
 		return nil, fmt.Errorf("error creating short url: %v", err.Error())
 	}
 	return &CreateShortlinkResp{
-		ShortUrl: util.IDToURL(s.cfg.RootURL, id),
+		ShortUrl: util.IDToShortlink(s.cfg.RootURL, id),
 	}, nil
 }
 
 func (s Server) HealthCheck(ctx context.Context, req *HealthChecpReq) (*HealthCheckResp, error) {
 	return &HealthCheckResp{
 		Ok: true,
+	}, nil
+}
+
+func (s Server) RemoveShortlink(ctx context.Context, req *RemoveShortlinkReq) (*RemoveShortlinkResp, error) {
+	id, err := util.ShortlinkToID(req.ShortUrl)
+	if err != nil {
+		return nil, fmt.Errorf("provided an invalid short link")
+	}
+	removed, err := s.st.Remove(id)
+	if err != nil {
+		return nil, fmt.Errorf("error creating short url: %v", err.Error())
+	}
+	return &RemoveShortlinkResp{
+		Removed: removed,
 	}, nil
 }
