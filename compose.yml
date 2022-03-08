@@ -22,6 +22,9 @@ services:
       - "8085:80"
   redis:
     image: "redis:alpine"
+    command:
+      - "--save 20"
+      - "--loglevel warning"
     ports:
       - "6379:6379"
     volumes:
