@@ -1,0 +1,20 @@
+version: "3.9"
+services:
+  api:
+    build: 
+      context: .
+      dockerfile: api.dockerfile
+    ports:
+      - "8084:8084"
+    environment:
+      PORT: ":8084"
+      REDIS_URL: "localhost:6379"
+      ROOT_URL: "localhost:8084"
+  docs:
+    build: 
+      context: .
+      dockerfile: docs.dockerfile
+    ports:
+      - "8085:80"
+  redis:
+    image: "redis:alpine"
