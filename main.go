@@ -40,7 +40,7 @@ func main() {
 	// One could also have a specific sub-hierarchy for links, like `/u/{id}`, but that would add
 	// three additional characters to every link, and isn't really necessary given the single domain
 	// focus of this service.
-	serveMux.Handle("/", handler.NewShortlinkRedirect())
+	serveMux.Handle("/", handler.NewShortlinkRedirect(st))
 
 	// Middleware wrapping.
 	wrappedMux := middleware.NewLogRequest(serveMux)
