@@ -7,10 +7,9 @@ import (
 )
 
 type Config struct {
-	Port          string
-	PrometheusURL string
-	RedisURL      string
-	RootURL       *url.URL
+	Port     string
+	RedisURL string
+	RootURL  *url.URL
 }
 
 func Load() (*Config, error) {
@@ -18,7 +17,6 @@ func Load() (*Config, error) {
 	if port == "" {
 		port = ":8084"
 	}
-	prometheusUrl := os.Getenv("PROMETHEUS_URL")
 	redisUrl := os.Getenv("REDIS_URL")
 	rootUrlRaw := os.Getenv("ROOT_URL")
 	if rootUrlRaw == "" {
@@ -29,9 +27,8 @@ func Load() (*Config, error) {
 		return nil, fmt.Errorf("error parsing ROOT_URL: %v", err.Error())
 	}
 	return &Config{
-		Port:          port,
-		PrometheusURL: prometheusUrl,
-		RedisURL:      redisUrl,
-		RootURL:       rootUrl,
+		Port:     port,
+		RedisURL: redisUrl,
+		RootURL:  rootUrl,
 	}, nil
 }
