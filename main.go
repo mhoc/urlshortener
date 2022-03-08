@@ -32,6 +32,8 @@ func main() {
 	}
 
 	// Register prometheus metrics
+	// Of course, more metrics could be added; prometheus has a nice middleware wrapper around
+	// http handlers.
 	prometheus.MustRegister(handler.ShortlinkRedirectCounter)
 
 	// Create the twirp api server
@@ -44,7 +46,7 @@ func main() {
 	serveMux := http.NewServeMux()
 	serveMux.Handle(protoServer.PathPrefix(), protoServer)
 	serveMux.Handle("/metrics", promhttp.Handler())
-	// The shortlinks generated will simply look like `/{6+ random characters}` to be as short as
+	// The shortlinks generated will simply look like `/{8 random characters}` to be as short as
 	// possible.
 	// To handle those, this is a fall-through route which will route anything that isn't handled by
 	// the longer routes defined above. Go's servemux prefers matching on longer routes.

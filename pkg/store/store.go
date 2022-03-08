@@ -32,6 +32,6 @@ type Store interface {
 	// at all.
 	Remove(ctx context.Context, id string) (bool, error)
 
-	// Stop should shut down any connections to the store, including
+	// Stop should shut down any connections or lingering goroutines associated with the store.
 	Stop()
 }

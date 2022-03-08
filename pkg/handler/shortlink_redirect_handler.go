@@ -17,6 +17,7 @@ var (
 	})
 )
 
+// ShortlinkRedirect is a net/http.Handler which handles the shortlink redirects.
 type ShortlinkRedirect struct {
 	st store.Store
 }
@@ -46,6 +47,10 @@ func (h ShortlinkRedirect) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	ShortlinkRedirectCounter.With(prometheus.Labels{"short_url": r.URL.String()}).Inc()
+	// The redirect itself is handled with a 302 + Location header. A 301 may also be appropriate
+	// given the improbability of one shortlink being duplicated and pointing to two different
+	// origins at different times, but there's always the risk of browser caching messing something
+	// up.
 	w.Header().Add("Location", redirectTo)
 	w.WriteHeader(302)
 	w.Write([]byte(""))

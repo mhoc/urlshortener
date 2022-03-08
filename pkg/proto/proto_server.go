@@ -10,6 +10,8 @@ import (
 	"github.com/mhoc/urlshortener/pkg/util"
 )
 
+// Server is the primary protobuf server structure, which registers handlers for each proto/twirp
+// rpc the service exports.
 type Server struct {
 	cfg *config.Config
 	st  store.Store

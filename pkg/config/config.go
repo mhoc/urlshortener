@@ -6,6 +6,9 @@ import (
 	"os"
 )
 
+// Config loads and stores environment variables. I prefer this pattern over random usages of
+// os.Getenv elsewhere in a service, so a service has one file that essentially lists all the
+// environment variables it expects.
 type Config struct {
 	Port     string
 	RedisURL string

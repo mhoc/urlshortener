@@ -5,6 +5,7 @@ import (
 	"net/http"
 )
 
+// LogRequest is a simple net/http.Handler midleware for logging each request the server receives.
 type LogRequest struct {
 	wrap http.Handler
 }

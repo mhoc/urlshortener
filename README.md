@@ -38,6 +38,12 @@ curl -X POST localhost:8084/api/URLShortenerV1/RemoveShortlink -d '{"url":"http:
 {"removed":true}%
 ```
 
+Protobuf, as an API SDL, was selected as it has a lot of Go-centric codegen tooling available,
+whereas other SDLs like GraphQL aren't as mature. However, I've always found gRPC to be difficult
+to hack in for smaller projects like this; so Twitch's [Twirp](https://twitchtv.github.io/twirp/) is
+a cool alternative which still uses Protobuf, but has at least the one advantage of supporting both
+Protocol Buffer & JSON communication formats (depending on the Content-Type specified). 
+
 ## Metrics
 
 An example Prometheus + Grafana setup is included, with one metric exported for demonstration
