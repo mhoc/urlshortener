@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+option go_package = "pkg/proto";
+
+service URLShortenerV1 {
+    rpc CreateShortlink(CreateShortlinkReq) returns (CreateShortlinkResp);
+    rpc HealthCheck(HealthChecpReq) returns (HealthCheckResp);
+}
+
+message CreateShortlinkReq {
+    string url = 1;
+    optional int32 expires_in_seconds = 2;
+}
+
+message CreateShortlinkResp {
+    string short_url = 1;
+}
+
+message HealthChecpReq {}
+
+message HealthCheckResp {
+    bool ok = 1;
+}

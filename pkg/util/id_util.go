@@ -2,6 +2,9 @@ package util
 
 import (
 	"math/rand"
+	"net/url"
+	"path"
+
 	"time"
 )
 
@@ -22,4 +25,8 @@ func NewID() string {
 		b[i] = alphabet[prng.Intn(len(alphabet))]
 	}
 	return string(b)
+}
+
+func IDToURL(rootUrl *url.URL, id string) string {
+	return path.Join(rootUrl.String(), id)
 }

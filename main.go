@@ -3,26 +3,30 @@ package main
 import (
 	"log"
 	"net/http"
-	"os"
 
 	"github.com/twitchtv/twirp"
+	"gitlab.com/mhoc/urlshortener/pkg/config"
 	"gitlab.com/mhoc/urlshortener/pkg/handler"
 	"gitlab.com/mhoc/urlshortener/pkg/middleware"
 	"gitlab.com/mhoc/urlshortener/pkg/proto"
+	"gitlab.com/mhoc/urlshortener/pkg/store"
 )
 
 func main() {
 	log.Printf("starting server")
 
 	// Load environment variables for configuration
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = ":8084"
+	cfg, err := config.Load()
+	if err != nil {
+		panic(err)
 	}
+
+	// Choose an appropriate datastore, and set it up
+	st := store.NewInMemoryStore()
 
 	// Create the twirp api server
 	protoServer := proto.NewURLShortenerV1Server(
-		proto.NewServer(),
+		proto.NewServer(cfg, st),
 		twirp.WithServerPathPrefix("/api"),
 	)
 
@@ -42,9 +46,9 @@ func main() {
 	wrappedMux := middleware.NewLogRequest(serveMux)
 
 	// Start the http server
-	log.Printf("serving on port %v", port)
+	log.Printf("serving on port %v", cfg.Port)
 	server := &http.Server{
-		Addr:    port,
+		Addr:    cfg.Port,
 		Handler: wrappedMux,
 	}
 	log.Fatalf("%v", server.ListenAndServe())
