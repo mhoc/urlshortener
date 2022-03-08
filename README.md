@@ -73,4 +73,5 @@ of course, persistence).
 
 My thinking is that a mock like this can useful in a test/dev environment, where a full redis 
 instance is unavailable. Additionally, it gave more code to cover with tests, and I wanted to 
-demonstrate a pattern I enjoy whereby networked components are `interface`'d 
+demonstrate a pattern I enjoy whereby difficult to test components can be abstracted with 
+`interface` and mocks.
