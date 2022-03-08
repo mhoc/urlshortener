@@ -24,10 +24,15 @@ func (h ShortlinkRedirect) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(`{"error":"provided a malformed shortlink"}`))
 		return
 	}
-	redirectTo, err := h.st.Get(id)
+	redirectTo, err := h.st.Get(r.Context(), id)
 	if err != nil {
 		w.WriteHeader(500)
 		w.Write([]byte(`{"error":"internal server error"}`))
+		return
+	}
+	if redirectTo == "" {
+		w.WriteHeader(404)
+		w.Write([]byte(`{"error": "shortlink not found"}`))
 		return
 	}
 	w.Header().Add("Location", redirectTo)

@@ -22,7 +22,12 @@ func main() {
 	}
 
 	// Choose an appropriate datastore, and set it up
-	st := store.NewInMemoryStore()
+	var st store.Store
+	if cfg.RedisURL != "" {
+		st = store.NewRedis(cfg)
+	} else {
+		st = store.NewInMemoryStore()
+	}
 
 	// Create the twirp api server
 	protoServer := proto.NewURLShortenerV1Server(

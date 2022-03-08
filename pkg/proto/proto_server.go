@@ -27,7 +27,7 @@ func (s Server) CreateShortlink(ctx context.Context, req *CreateShortlinkReq) (*
 	if req.ExpiresInSeconds != nil {
 		expireIn = time.Duration(*req.ExpiresInSeconds) * time.Second
 	}
-	id, err := s.st.Create(req.Url, expireIn)
+	id, err := s.st.Create(ctx, req.Url, expireIn)
 	if err != nil {
 		return nil, fmt.Errorf("error creating short url: %v", err.Error())
 	}
@@ -47,7 +47,7 @@ func (s Server) RemoveShortlink(ctx context.Context, req *RemoveShortlinkReq) (*
 	if err != nil {
 		return nil, fmt.Errorf("provided an invalid short link")
 	}
-	removed, err := s.st.Remove(id)
+	removed, err := s.st.Remove(ctx, id)
 	if err != nil {
 		return nil, fmt.Errorf("error creating short url: %v", err.Error())
 	}

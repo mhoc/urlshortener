@@ -8,8 +8,8 @@ services:
       - "8084:8084"
     environment:
       PORT: ":8084"
-      REDIS_URL: "localhost:6379"
-      ROOT_URL: "localhost:8084"
+      REDIS_URL: "redis:6379"
+      ROOT_URL: "http://localhost:8084"
   docs:
     build: 
       context: .
@@ -18,3 +18,5 @@ services:
       - "8085:80"
   redis:
     image: "redis:alpine"
+    ports:
+      - "6379:6379"

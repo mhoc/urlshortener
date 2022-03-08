@@ -1,6 +1,7 @@
 package store
 
 import (
+	"context"
 	"log"
 	"sync"
 	"time"
@@ -33,7 +34,7 @@ func NewInMemoryStore() *InMemoryStore {
 	return ims
 }
 
-func (ims *InMemoryStore) Create(redirectToUrl string, expiresIn time.Duration) (string, error) {
+func (ims *InMemoryStore) Create(ctx context.Context, redirectToUrl string, expiresIn time.Duration) (string, error) {
 	// If the redirect url already exists in our store, we simply return the existing id.
 	if existingId, in := ims.urlToId[redirectToUrl]; in {
 		return existingId, nil
@@ -55,7 +56,7 @@ func (ims *InMemoryStore) Create(redirectToUrl string, expiresIn time.Duration) 
 		time.AfterFunc(expiresIn, func() {
 			// We don't need to grab the mutex during the removal, as ims.Remove() will grab it
 			// anyway. The error handling here isn't the best.
-			_, err := ims.Remove(id)
+			_, err := ims.Remove(context.Background(), id)
 			if err != nil {
 				log.Printf("error expiring %v: %v", id, err.Error())
 			}
@@ -64,7 +65,7 @@ func (ims *InMemoryStore) Create(redirectToUrl string, expiresIn time.Duration) 
 	return id, nil
 }
 
-func (ims *InMemoryStore) Get(id string) (string, error) {
+func (ims *InMemoryStore) Get(ctx context.Context, id string) (string, error) {
 	// Fairly straightforward; if the ID exists in our mapping of IDs to URLs, we can return it, but
 	// otherwise we want to return an empty string.
 	if redirectToUrl, in := ims.idToUrl[id]; in {
@@ -73,7 +74,7 @@ func (ims *InMemoryStore) Get(id string) (string, error) {
 	return "", nil
 }
 
-func (ims *InMemoryStore) Remove(id string) (bool, error) {
+func (ims *InMemoryStore) Remove(ctx context.Context, id string) (bool, error) {
 	// A write operation, and thus we want to grab the mutex.
 	ims.lock.Lock()
 	defer ims.lock.Unlock()
