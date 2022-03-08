@@ -48,4 +48,5 @@ every redirect for each distinct short url. With the stack up, this can be found
 - Username: `admin`
 - Password: `password`
 
+<img width="782" alt="Screen Shot 2022-03-08 at 10 29 55 AM" src="https://user-images.githubusercontent.com/1148452/157275642-49416a43-e566-4a7f-9dac-cdbb2636a4dc.png">
 
