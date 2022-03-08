@@ -1,4 +1,8 @@
 version: "3.9"
+volumes:
+  grafana_data: {}
+  prometheus_data: {}
+  redis_data: {}
 services:
   api:
     build: 
@@ -20,3 +24,30 @@ services:
     image: "redis:alpine"
     ports:
       - "6379:6379"
+    volumes:
+      - redis_data:/data
+  prometheus:
+    image: "prom/prometheus:latest"
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus:/etc/prometheus
+      - prometheus_data:/prometheus
+  grafana:
+    image: grafana/grafana:6.7.2
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=password
+      - GF_USERS_ALLOW_SIGN_UP=false
+    ports:
+      - "3000:3000"

@@ -1,35 +1,51 @@
 # URL Shortener
 
-## Problem Statement
+This is a URL shortening service, which includes usages of technologies like: Go, Protobuf/Twirp,
+Redis, Grafana, and Prometheus.
 
-You've been asked to make an internal service for shortening URLs that anyone in the company can 
-use. You can implement it in any way you see fit, including whatever backend functionality that you 
-think makes sense. Please try to make it both end user and developer friendly. Please include a 
-README with documentation on how to build, and run and test the system. Clearly state all 
-assumptions and design decisions in the README. 
+## Running Locally
 
-A short URL: 
+The entire stack can be ran with `docker compose up`. This spins up the following services:
 
-- Has one long URL 
-- This URL shortener should have a well-defined API for URLs created, including analytics of usage.
-- No duplicate URLs are allowed to be created.
-- Short links can expire at a future time or can live forever.
+| Service           | Port |
+|-------------------|------|
+| API               | 8084 |
+| API Documentation | 8085 |
+| Redis             | 6379 |
+| Prometheus        | 9090 |
+| Grafana           | 3000 |
 
-Your solution must support: 
+## API
 
-- Generating a short url from a long url 
-- Redirecting a short url to a long url. 
-- List the number of times a short url has been accessed in the last 24 hours, past week, and all time. 
-- Data persistence (must survive computer restarts)
-- Metrics and/or logging: Implement metrics or logging for the purposes of troubleshooting and alerting. This is optional.
-- Short links can be deleted
+Auto-generated API documentation can be found in the `docs/` folder, or after running the stack
+within a web browser on [localhost:8085](https://localhost:8085/).
 
-Project Requirements:
+The API is unauthenticated. 
 
-- This project should be able to be runnable locally with some simple instructions
-- This project's documentation should include build and deploy instruction
-- Tests should be provided and able to be executed locally or within a test environment.
+For example, to create a new shortlink:
 
-## Setup Instructions
+```
+curl -X POST localhost:8084/api/URLShortenerV1/CreateShortlink -d '{"url":"https://google.com/"}' -H "Content-Type:application/json"
 
-TODO
+{"short_url":"http://localhost:8084/FQtXL9Yx"}%
+```
+
+To remove that shortlink from the system:
+
+```
+curl -X POST localhost:8084/api/URLShortenerV1/RemoveShortlink -d '{"url":"http://localhost:8084/FQtXL9Yx"}' -H "Content-Type:application/json"
+
+{"removed":true}%
+```
+
+## Metrics
+
+An example Prometheus + Grafana setup is included, with one metric exported for demonstration
+purposes; a counter named `api_shortlink_redirects`, with the label `short_url`, incremented on 
+every redirect for each distinct short url. With the stack up, this can be found at
+[localhost:3000](http://localhost:3000/explore?orgId=1&left=%5B%22now-1h%22,%22now%22,%22Prometheus%22,%7B%22expr%22:%22rate(api_shortlink_redirects%5B1m%5D)%22%7D,%7B%22mode%22:%22Metrics%22%7D,%7B%22ui%22:%5Btrue,true,true,%22none%22%5D%7D%5D)
+
+- Username: `admin`
+- Password: `password`
+
+

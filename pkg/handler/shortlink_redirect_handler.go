@@ -5,6 +5,16 @@ import (
 
 	"github.com/mhoc/urlshortener/pkg/store"
 	"github.com/mhoc/urlshortener/pkg/util"
+	"github.com/prometheus/client_golang/prometheus"
+)
+
+var (
+	ShortlinkRedirectCounter = prometheus.NewCounterVec(prometheus.CounterOpts{
+		Namespace: "api",
+		Name:      "shortlink_redirects",
+	}, []string{
+		"short_url",
+	})
 )
 
 type ShortlinkRedirect struct {
@@ -35,6 +45,7 @@ func (h ShortlinkRedirect) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(`{"error": "shortlink not found"}`))
 		return
 	}
+	ShortlinkRedirectCounter.With(prometheus.Labels{"short_url": r.URL.String()}).Inc()
 	w.Header().Add("Location", redirectTo)
 	w.WriteHeader(302)
 	w.Write([]byte(""))

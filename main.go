@@ -9,6 +9,8 @@ import (
 	"github.com/mhoc/urlshortener/pkg/middleware"
 	"github.com/mhoc/urlshortener/pkg/proto"
 	"github.com/mhoc/urlshortener/pkg/store"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/twitchtv/twirp"
 )
 
@@ -29,6 +31,9 @@ func main() {
 		st = store.NewInMemoryStore()
 	}
 
+	// Register prometheus metrics
+	prometheus.MustRegister(handler.ShortlinkRedirectCounter)
+
 	// Create the twirp api server
 	protoServer := proto.NewURLShortenerV1Server(
 		proto.NewServer(cfg, st),
@@ -38,6 +43,7 @@ func main() {
 	// Set up routes
 	serveMux := http.NewServeMux()
 	serveMux.Handle(protoServer.PathPrefix(), protoServer)
+	serveMux.Handle("/metrics", promhttp.Handler())
 	// The shortlinks generated will simply look like `/{6+ random characters}` to be as short as
 	// possible.
 	// To handle those, this is a fall-through route which will route anything that isn't handled by
