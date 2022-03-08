@@ -33,7 +33,7 @@ curl -X POST localhost:8084/api/URLShortenerV1/CreateShortlink -d '{"url":"https
 To remove that shortlink from the system:
 
 ```
-curl -X POST localhost:8084/api/URLShortenerV1/RemoveShortlink -d '{"url":"http://localhost:8084/FQtXL9Yx"}' -H "Content-Type:application/json"
+curl -X POST localhost:8084/api/URLShortenerV1/RemoveShortlink -d '{"short_url":"http://localhost:8084/FQtXL9Yx"}' -H "Content-Type:application/json"
 
 {"removed":true}%
 ```
