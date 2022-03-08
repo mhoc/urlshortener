@@ -50,3 +50,27 @@ every redirect for each distinct short url. With the stack up, this can be found
 
 <img width="782" alt="Screen Shot 2022-03-08 at 10 29 55 AM" src="https://user-images.githubusercontent.com/1148452/157275642-49416a43-e566-4a7f-9dac-cdbb2636a4dc.png">
 
+## Scripts
+
+There's a few scripts included in the `script/` folder which can be used to complete some of the
+codegen stuff, along with `./manual_test.sh` which runs through all the API endpoints when the
+service is running, outputting the data it returns for manual sanity checking.
+
+## Testing
+
+Automated tests can be ran with:
+
+```
+go test ./...
+```
+
+## InMemoryStore
+
+In addition to the Redis store, there's also an in-memory store available by starting the api server
+without the `REDIS_URL` environment variable configured. Its implementation is in 
+`pkg/store/in_memory_store.go`, and it should support everything the redis store does (beside,
+of course, persistence).
+
+My thinking is that a mock like this can useful in a test/dev environment, where a full redis 
+instance is unavailable. Additionally, it gave more code to cover with tests, and I wanted to 
+demonstrate a pattern I enjoy whereby networked components are `interface`'d 
