@@ -54,7 +54,10 @@ every redirect for each distinct short url. With the stack up, this can be found
 - Username: `admin`
 - Password: `password`
 
-<img width="782" alt="Screen Shot 2022-03-08 at 10 29 55 AM" src="https://user-images.githubusercontent.com/1148452/157275642-49416a43-e566-4a7f-9dac-cdbb2636a4dc.png">
+This enables the service to return metrics like the number of URL accesses during any arbitrary 
+timeframe in the past, with specificity on what URL was accessed:
+
+<img width="785" alt="Screen Shot 2022-03-08 at 10 54 29 PM" src="https://user-images.githubusercontent.com/1148452/157369798-83ce8077-6f5b-48a0-9fbb-d61a7525d5ac.png">
 
 ## Scripts
 
